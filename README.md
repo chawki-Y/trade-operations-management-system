@@ -93,6 +93,32 @@ Operational event tracking and audit history for trade lifecycle events, market 
 
 ![Audit Trail](screenshots/audit-trail.png)
 
+## Mobile Responsive View
+
+The application was designed to support desktop, tablet, and mobile devices.
+
+Responsive capabilities include:
+
+* Mobile-friendly trade capture workflow
+* Responsive dashboard cards
+* Market Overview watchlist on smaller screens
+* Scrollable trade and audit tables
+* Touch-friendly controls and actions
+* Adaptive layouts for different screen sizes
+
+### Mobile Dashboard
+
+![Mobile Dashboard](screenshots/mobileView/mobile-view-1.png)
+
+### Mobile Trade Capture
+
+![Mobile Trade Capture](screenshots/mobileView/mobile-view-2.png)
+
+### Mobile Market Overview
+
+![Mobile Market Overview](screenshots/mobileView/mobile-view-3.png)
+
+
 
 ## Tech Stack
 
