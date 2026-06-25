@@ -45,65 +45,23 @@ The goal is to simulate the type of support tool used by middle-office teams to 
 
 ## Screenshots
 
-### Dashboard Overview
+## Operations Dashboard
 
-Shows the trade operations dashboard with summary metrics, operational alerts, market data integration, and reporting.
+The Operations Dashboard provides a real-time overview of trade activity, operational alerts, and daily monitoring metrics. It helps middle-office users quickly identify rejected trades, stale market data, and the overall health of the trading system.
 
-![Dashboard Overview](screenshots/dashboard-overview.png)
+![Operations Dashboard](screenshots/Operations-Dashboard.png)
 
----
+## Market Monitoring & Trade Capture
 
-### Market Overview
+The Market Monitoring section displays live market prices for supported instruments, while the Trade Capture form allows users to submit BUY and SELL trades. The backend validates the selected instrument, retrieves the latest market price, calculates unrealized P&L, and books or rejects the trade.
 
-Displays all active instruments, latest market prices, asset classes, currencies, and market data source information.
+![Market Monitoring & Trade Capture](screenshots/Market-Monitoring-&-Trade-Capture.png)
 
-![Market Overview](screenshots/market-overview.png)
+## Trade Monitoring & Investigation
 
----
+The Latest Trades table provides an overview of recent trades, while the Trade Investigation section allows operations users to search by Trade ID, review trade details, investigate issues, and analyze related audit events through the Audit Trail.
 
-### Trade Capture
-
-Trade entry screen with instrument selection from PostgreSQL reference data, trade details, and automated market price integration.
-
-![Trade Capture](screenshots/trade-capture.png)
-
----
-
-### Latest Trades
-
-Trade book showing generated trade IDs, instrument information, P&L calculations, lifecycle status, and trade actions.
-
-![Latest Trades](screenshots/latest-trades.png)
-
----
-
-### Trade Detail View
-
-Detailed trade information accessible from the Latest Trades table.
-
-Includes:
-
-* Trade ID
-* Instrument
-* Trade Type
-* Quantity
-* Trade Price
-* Market Price
-* P&L
-* Status
-* Market Data Source
-* Trade Date
-* Created Date
-
-![Trade Detail View](screenshots/trade-detail-view.png)
-
----
-
-### Audit Trail
-
-Operational event tracking and audit history for trade lifecycle events, market data refreshes, and P&L recalculations.
-
-![Audit Trail](screenshots/audit-trail.png)
+![Trade Monitoring & Investigation](screenshots/Trade-Monitoring-&-Investigation.png)
 
 ## Mobile Responsive View
 
