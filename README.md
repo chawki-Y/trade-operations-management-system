@@ -356,8 +356,18 @@ The Audit Trail section shows recent operational events, such as:
 - `TRADE_REJECTED`
 - `TRADE_BOOKED`
 - `MARKET_PRICE_REFRESHED`
+- `MARKET_PRICE_STALE_FALLBACK_USED`
+- `MARKET_PRICE_DATABASE_FALLBACK_USED`
+- `MARKET_PRICE_UNAVAILABLE`
 - `MARKET_OVERVIEW_REFRESHED`
 - `PNL_RECALCULATED`
+
+Market data audit events are used to explain price freshness and fallback behavior:
+
+- `MARKET_PRICE_REFRESHED`: a fresh provider price was fetched and saved.
+- `MARKET_PRICE_STALE_FALLBACK_USED`: the provider failed, so the backend returned stale in-memory cache.
+- `MARKET_PRICE_DATABASE_FALLBACK_USED`: the provider failed and no memory cache was available, so the backend returned the latest persisted PostgreSQL price.
+- `MARKET_PRICE_UNAVAILABLE`: no API price, cache price, or database fallback price was available.
 
 Audit logging is intentionally non-blocking. If writing an audit event fails, the server logs a warning but does not crash the main trade or market data workflow.
 
