@@ -8,6 +8,7 @@ const instrumentRoutes = require("./routes/instrumentRoutes");
 const marketDataRoutes = require("./routes/marketDataRoutes");
 const marketOverviewRoutes = require("./routes/marketOverviewRoutes");
 const auditLogRoutes = require("./routes/auditLogRoutes");
+const operationsRoutes = require("./routes/operationsRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -22,7 +23,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/api/health", (req, res) => {
-  res.json({ message: "Trade Lifecycle Management System API is running" });
+  res.json({ message: "Trade Operations Monitoring Dashboard API is running" });
 });
 
 app.use("/api/trades", tradeRoutes);
@@ -30,7 +31,8 @@ app.use("/api/instruments", instrumentRoutes);
 app.use("/api/market-price", marketDataRoutes);
 app.use("/api/market-overview", marketOverviewRoutes);
 app.use("/api/audit-logs", auditLogRoutes);
+app.use("/api/operations", operationsRoutes);
 
 app.listen(PORT, () => {
-  console.log(`Trade Lifecycle Management System API listening on port ${PORT}`);
+  console.log(`Trade Operations Monitoring Dashboard API listening on port ${PORT}`);
 });

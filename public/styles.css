@@ -123,7 +123,9 @@ h2 {
 }
 
 #marketOverviewStatus,
-#auditStatus {
+#auditStatus,
+#operationsStatus,
+#investigationStatus {
   color: var(--muted);
   font-size: 14px;
   margin-top: 4px;
@@ -143,31 +145,106 @@ form {
   gap: 14px;
 }
 
+.investigation-form {
+  grid-template-columns: minmax(240px, 1fr) auto;
+  margin-bottom: 14px;
+}
+
+.investigation-result {
+  display: grid;
+  gap: 14px;
+}
+
+.investigation-summary {
+  border-left: 4px solid var(--accent);
+  background: var(--surface-soft);
+  padding: 12px;
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.investigation-result h3 {
+  margin: 0;
+  font-size: 15px;
+}
+
 .market-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
 }
 
-.market-grid div {
+.operations-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.market-grid div,
+.operation-metric {
   background: var(--surface-soft);
   border: 1px solid var(--border);
   border-radius: 6px;
   padding: 12px;
 }
 
-.market-grid span {
+.market-grid span,
+.operation-metric span {
   display: block;
   color: var(--muted);
   font-size: 13px;
   margin-bottom: 6px;
 }
 
-.market-grid strong {
+.market-grid strong,
+.operation-metric strong {
   display: block;
   font-size: 18px;
   line-height: 1.2;
   overflow-wrap: anywhere;
+}
+
+.alerts-list {
+  display: grid;
+  gap: 8px;
+}
+
+.alert-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--border);
+  border-left-width: 4px;
+  border-radius: 6px;
+  padding: 10px 12px;
+  background: #ffffff;
+}
+
+.alert-item span {
+  min-width: 76px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.alert-item strong {
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.alert-item.info {
+  border-left-color: #2563eb;
+}
+
+.alert-item.warning {
+  border-left-color: #d97706;
+}
+
+.alert-item.danger {
+  border-left-color: var(--danger);
 }
 
 #marketPriceStatus {
@@ -428,6 +505,10 @@ td {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .operations-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   form {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -448,7 +529,9 @@ td {
   }
 
   .summary,
+  .operations-grid,
   form,
+  .investigation-form,
   .market-grid,
   .detail-grid {
     grid-template-columns: 1fr;

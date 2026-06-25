@@ -3,14 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Trade Lifecycle Management System</title>
+    <title>Trade Operations Monitoring Dashboard</title>
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
     <header class="topbar">
       <div>
-        <p class="eyebrow">Fintech Operations</p>
-        <h1>Trade Lifecycle Management System</h1>
+        <p class="eyebrow">Middle Office Operations</p>
+        <h1>Trade Operations Monitoring Dashboard</h1>
       </div>
       <button id="refreshButton" class="secondary-button" type="button">Refresh Trade P&L</button>
     </header>
@@ -33,6 +33,43 @@
           <span>Total P&L</span>
           <strong id="totalPnl">0.0000</strong>
         </article>
+      </section>
+
+      <section class="panel operations-panel" aria-label="Operational alerts">
+        <div class="section-heading">
+          <div>
+            <h2>Operational Alerts</h2>
+            <p id="operationsStatus">Daily trade activity and market data health</p>
+          </div>
+          <button id="refreshOperationsButton" class="secondary-button" type="button">Refresh Alerts</button>
+        </div>
+        <div class="operations-grid">
+          <article class="operation-metric">
+            <span>Booked Today</span>
+            <strong id="bookedTradesToday">0</strong>
+          </article>
+          <article class="operation-metric">
+            <span>Rejected Today</span>
+            <strong id="rejectedTradesToday">0</strong>
+          </article>
+          <article class="operation-metric">
+            <span>Total P&L Today</span>
+            <strong id="totalPnlToday">0.0000</strong>
+          </article>
+          <article class="operation-metric">
+            <span>Stale Prices</span>
+            <strong id="staleMarketDataCount">0</strong>
+          </article>
+          <article class="operation-metric">
+            <span>Unavailable Prices</span>
+            <strong id="unavailableMarketDataCount">0</strong>
+          </article>
+          <article class="operation-metric">
+            <span>Latest Audit Event</span>
+            <strong id="lastAuditEventAt">-</strong>
+          </article>
+        </div>
+        <div id="operationalAlerts" class="alerts-list"></div>
       </section>
 
       <section class="panel market-panel" aria-label="Live market price">
@@ -154,6 +191,41 @@
             </thead>
             <tbody id="tradesTable"></tbody>
           </table>
+        </div>
+      </section>
+
+      <section class="panel investigation-panel" aria-label="Trade investigation">
+        <div class="section-heading">
+          <div>
+            <h2>Trade Investigation</h2>
+            <p id="investigationStatus">Search by Trade ID to review trade details and related audit events</p>
+          </div>
+        </div>
+
+        <form id="investigationForm" class="investigation-form">
+          <label>
+            Trade ID
+            <input id="investigationTradeId" type="text" placeholder="TRD-20260625-000004" required />
+          </label>
+          <button class="primary-button" type="submit">Investigate</button>
+        </form>
+
+        <div id="investigationResult" class="investigation-result" hidden>
+          <p id="investigationSummary" class="investigation-summary"></p>
+          <div id="investigationTradeDetails" class="detail-grid"></div>
+          <h3>Related Audit Logs</h3>
+          <div class="table-wrap">
+            <table class="audit-table">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Event Type</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody id="investigationAuditTable"></tbody>
+            </table>
+          </div>
         </div>
       </section>
 

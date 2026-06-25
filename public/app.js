@@ -1,8 +1,11 @@
 const tradeForm = document.querySelector("#tradeForm");
 const refreshButton = document.querySelector("#refreshButton");
+const refreshOperationsButton = document.querySelector("#refreshOperationsButton");
 const refreshMarketPriceButton = document.querySelector("#refreshMarketPriceButton");
 const refreshMarketOverviewButton = document.querySelector("#refreshMarketOverviewButton");
 const refreshAuditButton = document.querySelector("#refreshAuditButton");
+const operationsStatus = document.querySelector("#operationsStatus");
+const operationalAlerts = document.querySelector("#operationalAlerts");
 const formMessage = document.querySelector("#formMessage");
 const tradesTable = document.querySelector("#tradesTable");
 const tradeCount = document.querySelector("#tradeCount");
@@ -13,6 +16,13 @@ const auditStatus = document.querySelector("#auditStatus");
 const tradeDetailModal = document.querySelector("#tradeDetailModal");
 const tradeDetailContent = document.querySelector("#tradeDetailContent");
 const closeTradeDetailButton = document.querySelector("#closeTradeDetailButton");
+const investigationForm = document.querySelector("#investigationForm");
+const investigationTradeId = document.querySelector("#investigationTradeId");
+const investigationStatus = document.querySelector("#investigationStatus");
+const investigationResult = document.querySelector("#investigationResult");
+const investigationSummary = document.querySelector("#investigationSummary");
+const investigationTradeDetails = document.querySelector("#investigationTradeDetails");
+const investigationAuditTable = document.querySelector("#investigationAuditTable");
 const instrumentSelect = document.querySelector("#instrument");
 const submitButton = tradeForm.querySelector("button[type='submit']");
 const selectedInstrumentLabel = document.querySelector("#selectedInstrumentLabel");
@@ -28,6 +38,15 @@ const metricEls = {
   validTrades: document.querySelector("#validTrades"),
   rejectedTrades: document.querySelector("#rejectedTrades"),
   totalPnl: document.querySelector("#totalPnl")
+};
+
+const operationsEls = {
+  bookedTradesToday: document.querySelector("#bookedTradesToday"),
+  rejectedTradesToday: document.querySelector("#rejectedTradesToday"),
+  totalPnlToday: document.querySelector("#totalPnlToday"),
+  staleMarketDataCount: document.querySelector("#staleMarketDataCount"),
+  unavailableMarketDataCount: document.querySelector("#unavailableMarketDataCount"),
+  lastAuditEventAt: document.querySelector("#lastAuditEventAt")
 };
 
 document.querySelector("#tradeDate").valueAsDate = new Date();
@@ -125,6 +144,43 @@ async function loadReport() {
   metricEls.validTrades.textContent = report.BookedTrades ?? report.ValidTrades ?? 0;
   metricEls.rejectedTrades.textContent = report.RejectedTrades ?? 0;
   metricEls.totalPnl.textContent = formatNumber(report.TotalPnL ?? 0);
+}
+
+function renderAlerts(alerts) {
+  if (!alerts.length) {
+    operationalAlerts.innerHTML = `<p class="empty-row">No operational alerts.</p>`;
+    return;
+  }
+
+  operationalAlerts.innerHTML = alerts.map((alert) => `
+    <div class="alert-item ${alert.level}">
+      <span>${alert.level}</span>
+      <strong>${alert.message}</strong>
+    </div>
+  `).join("");
+}
+
+async function loadOperationalSummary() {
+  operationsStatus.textContent = "Loading operational summary...";
+  refreshOperationsButton.disabled = true;
+
+  try {
+    const summary = await fetchJson("/api/operations/summary");
+
+    operationsEls.bookedTradesToday.textContent = summary.bookedTradesToday ?? 0;
+    operationsEls.rejectedTradesToday.textContent = summary.rejectedTradesToday ?? 0;
+    operationsEls.totalPnlToday.textContent = formatNumber(summary.totalPnLToday ?? 0);
+    operationsEls.staleMarketDataCount.textContent = summary.staleMarketDataCount ?? 0;
+    operationsEls.unavailableMarketDataCount.textContent = summary.unavailableMarketDataCount ?? 0;
+    operationsEls.lastAuditEventAt.textContent = formatTime(summary.lastAuditEventAt);
+    renderAlerts(summary.alerts || []);
+    operationsStatus.textContent = "Daily trade activity and market data health";
+  } catch (error) {
+    operationsStatus.textContent = "Operational summary unavailable";
+    operationalAlerts.innerHTML = `<div class="alert-item danger"><span>danger</span><strong>${error.message}</strong></div>`;
+  } finally {
+    refreshOperationsButton.disabled = false;
+  }
 }
 
 async function loadMarketOverview() {
@@ -304,16 +360,18 @@ async function refreshDashboard() {
   await loadTrades();
   await loadReport();
   await loadAuditLogs();
+  await loadOperationalSummary();
 }
 
 async function refreshTradePnl() {
   await loadTrades();
   await loadReport();
   await loadAuditLogs();
+  await loadOperationalSummary();
 }
 
-function openTradeDetail(trade) {
-  const fields = [
+function buildTradeDetailFields(trade) {
+  return [
     ["Trade ID", trade.TradeId],
     ["Instrument", trade.Instrument],
     ["Trade Type", trade.TradeType],
@@ -328,14 +386,54 @@ function openTradeDetail(trade) {
     ["Trade Date", formatDateTime(trade.TradeDate)],
     ["Created At", formatDateTime(trade.CreatedAt)]
   ];
+}
 
-  tradeDetailContent.innerHTML = fields.map(([label, value]) => `
+function renderDetailGrid(container, trade) {
+  container.innerHTML = buildTradeDetailFields(trade).map(([label, value]) => `
     <div>
       <span>${label}</span>
       <strong>${value ?? "-"}</strong>
     </div>
   `).join("");
+}
+
+function openTradeDetail(trade) {
+  renderDetailGrid(tradeDetailContent, trade);
   tradeDetailModal.hidden = false;
+}
+
+function renderInvestigationAuditLogs(logs) {
+  if (!logs.length) {
+    investigationAuditTable.innerHTML = `<tr><td class="empty-row" colspan="3">No audit events found for this trade.</td></tr>`;
+    return;
+  }
+
+  investigationAuditTable.innerHTML = logs.map((log) => `
+    <tr>
+      <td>${formatDateTime(log.createdAt)}</td>
+      <td>${log.eventType}</td>
+      <td>${log.description}</td>
+    </tr>
+  `).join("");
+}
+
+async function investigateTrade(tradeId) {
+  investigationStatus.textContent = "Investigating trade...";
+  investigationResult.hidden = true;
+
+  try {
+    const result = await fetchJson(`/api/operations/investigate/${encodeURIComponent(tradeId)}`);
+    investigationSummary.textContent = result.summary;
+    renderDetailGrid(investigationTradeDetails, result.trade);
+    renderInvestigationAuditLogs(result.auditLogs || []);
+    investigationResult.hidden = false;
+    investigationStatus.textContent = `Investigation loaded for ${result.trade.TradeId}`;
+  } catch (error) {
+    investigationStatus.textContent = error.message;
+    investigationSummary.textContent = "";
+    investigationTradeDetails.innerHTML = "";
+    investigationAuditTable.innerHTML = "";
+  }
 }
 
 function closeTradeDetail() {
@@ -413,6 +511,10 @@ refreshButton.addEventListener("click", async () => {
   }
 });
 
+refreshOperationsButton.addEventListener("click", async () => {
+  await loadOperationalSummary();
+});
+
 refreshMarketPriceButton.addEventListener("click", async () => {
   if (!instrumentSelect.value) {
     setMessage("Please select an instrument first.", "error");
@@ -421,15 +523,29 @@ refreshMarketPriceButton.addEventListener("click", async () => {
 
   await loadMarketPrice(instrumentSelect.value);
   await loadAuditLogs();
+  await loadOperationalSummary();
 });
 
 refreshMarketOverviewButton.addEventListener("click", async () => {
   await loadMarketOverview();
   await loadAuditLogs();
+  await loadOperationalSummary();
 });
 
 refreshAuditButton.addEventListener("click", async () => {
   await loadAuditLogs();
+});
+
+investigationForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const tradeId = investigationTradeId.value.trim();
+
+  if (!tradeId) {
+    investigationStatus.textContent = "Enter a Trade ID to investigate.";
+    return;
+  }
+
+  await investigateTrade(tradeId);
 });
 
 tradesTable.addEventListener("click", async (event) => {

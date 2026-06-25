@@ -1,7 +1,7 @@
 {
-  "name": "trade-lifecycle-management-system",
+  "name": "trade-operations-monitoring-dashboard",
   "version": "1.0.0",
-  "description": "Mini financial trade lifecycle management system using Node.js, Express, and PostgreSQL.",
+  "description": "Mini trade operations monitoring dashboard using Node.js, Express, and PostgreSQL.",
   "main": "src/server.js",
   "scripts": {
     "dev": "nodemon src/server.js",
@@ -12,7 +12,8 @@
     "express",
     "postgresql",
     "fintech",
-    "trade-lifecycle-management",
+    "trade-operations",
+    "middle-office",
     "pnl"
   ],
   "author": "",

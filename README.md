@@ -1,12 +1,22 @@
-# Trade Lifecycle Management System
+# Trade Operations Monitoring Dashboard
 
-A full-stack mini trade lifecycle management system that simulates a simplified capital markets workflow.
+A full-stack mini trade operations monitoring dashboard that simulates a simplified capital markets middle-office workflow.
 
-The application allows users to enter financial trades, select valid instruments from PostgreSQL reference data, fetch live market prices, validate trade data, calculate profit/loss, store trades in PostgreSQL, and view trade reporting metrics from a simple dashboard.
+The application allows users to monitor daily trade activity, identify rejected trades, detect stale market data, review operational alerts, investigate trade issues, and track P&L from a simple dashboard.
 
 ## Purpose
 
-This project was built to demonstrate backend API development, SQL/database design, business rule validation, financial calculation logic, and reporting - concepts commonly found in banking, ERP, and financial technology systems.
+This project simulates a trade operations monitoring dashboard used by middle-office or support analysts to monitor booked/rejected trades, market data health, P&L, and audit events.
+
+It was built to demonstrate backend API development, SQL/database design, business rule validation, financial calculation logic, market data monitoring, auditability, and operational reporting - concepts commonly found in banking, capital markets, ERP, and financial technology systems.
+
+## Real-World Use Case
+
+A trade operations analyst opens the dashboard every morning to check daily trade activity.
+
+They review booked and rejected trades, scan operational alerts, investigate rejected trades or stale market data, and use audit logs to understand what happened.
+
+The goal is to simulate the type of support tool used by middle-office teams to monitor trade flow after capture and quickly spot issues requiring follow-up.
 
 ## Features
 
@@ -21,6 +31,8 @@ This project was built to demonstrate backend API development, SQL/database desi
 - Track simplified trade lifecycle statuses: NEW, VALIDATED, BOOKED, REJECTED
 - Store audit logs for trade, market data, and P&L events
 - View full trade details from the Latest Trades table
+- Monitor operational alerts for daily trade health
+- Search by Trade ID to investigate trade issues
 - Validate trade input data
 - Validate submitted instruments against backend reference data
 - Calculate P&L for BUY and SELL trades
@@ -35,7 +47,7 @@ This project was built to demonstrate backend API development, SQL/database desi
 
 ### Dashboard Overview
 
-Shows the trade lifecycle dashboard with summary metrics, market data integration, and reporting.
+Shows the trade operations dashboard with summary metrics, operational alerts, market data integration, and reporting.
 
 ![Dashboard Overview](screenshots/dashboard-overview.png)
 
@@ -286,6 +298,75 @@ Example:
 ]
 ```
 
+### GET `/api/operations/summary`
+
+Returns the middle-office operational summary used by the Operational Alerts section.
+
+Example:
+
+```json
+{
+  "bookedTradesToday": 8,
+  "rejectedTradesToday": 2,
+  "totalPnLToday": 1240.55,
+  "staleMarketDataCount": 1,
+  "unavailableMarketDataCount": 0,
+  "lastAuditEventAt": "2026-06-25T10:15:00.000Z",
+  "latestRejectedTrades": [],
+  "alerts": [
+    {
+      "level": "warning",
+      "message": "2 trades rejected today"
+    }
+  ]
+}
+```
+
+### GET `/api/operations/investigate/:tradeId`
+
+Returns a trade, related audit logs, and a plain-English investigation summary.
+
+Example:
+
+```json
+{
+  "trade": {},
+  "auditLogs": [],
+  "summary": "Trade TRD-20260625-000004 was rejected because quantity must be greater than zero."
+}
+```
+
+## Operational Alerts
+
+The Operational Alerts section gives a morning-check view for support analysts.
+
+It shows:
+
+- Booked trades today
+- Rejected trades today
+- Total P&L today
+- Stale market data count
+- Unavailable market data count
+- Latest audit event time
+- Alert badges marked as info, warning, or danger
+
+Market data is treated as stale when a booked trade's last market price update is older than the operational freshness threshold used by the backend.
+
+## Trade Investigation
+
+The Trade Investigation section lets a user search by Trade ID.
+
+It returns:
+
+- Full trade details
+- Rejection reason for rejected trades
+- Market data source
+- Last price update time
+- Related audit logs for that trade
+- A short investigation summary
+
+This turns the app from a trade capture demo into a support workflow: the analyst can see an issue, search the trade, and review the operational evidence.
+
 ## Trade Lifecycle
 
 The project uses a simplified lifecycle to make trade lifecycle management more realistic:
@@ -369,6 +450,16 @@ Free market data APIs can have rate limits, delayed data, symbol coverage differ
 
 The Market Overview simulates a simplified market watchlist found in financial platforms. It supports market data monitoring alongside trade lifecycle management and P&L tracking.
 
+## Screenshot Recommendations
+
+For a complete portfolio presentation, include screenshots for:
+
+- Operational Alerts
+- Trade Investigation
+- Market Overview
+- Latest Trades
+- Audit Trail
+
 ## P&L Formula
 
 BUY:
@@ -386,7 +477,7 @@ SELL:
 ## Project Structure
 
 ```text
-trade-lifecycle-management-system/
+trade-operations-monitoring-dashboard/
 |-- screenshots/
 |   |-- audit-trail.png
 |   |-- dashboard-overview.png
@@ -406,12 +497,14 @@ trade-lifecycle-management-system/
 |   |   |-- instrumentController.js
 |   |   |-- marketDataController.js
 |   |   |-- marketOverviewController.js
+|   |   |-- operationsController.js
 |   |   `-- tradeController.js
 |   |-- routes/
 |   |   |-- auditLogRoutes.js
 |   |   |-- instrumentRoutes.js
 |   |   |-- marketDataRoutes.js
 |   |   |-- marketOverviewRoutes.js
+|   |   |-- operationsRoutes.js
 |   |   `-- tradeRoutes.js
 |   |-- services/
 |   |   |-- auditLogService.js

@@ -30,6 +30,13 @@ async function buildMarketOverviewRow(instrument) {
       stale: marketData.stale || false
     };
   } catch (error) {
+    await createAuditLog(
+      "MARKET_PRICE_REFRESH_FAILED",
+      "INSTRUMENT",
+      instrument.symbol,
+      `Market price refresh failed for ${instrument.symbol}: ${error.message}.`
+    );
+
     return {
       symbol: instrument.symbol,
       name: instrument.name,
@@ -59,6 +66,13 @@ async function getMarketOverview(req, res) {
 
     return res.json(overview);
   } catch (error) {
+    await createAuditLog(
+      "MARKET_OVERVIEW_REFRESH_FAILED",
+      "MARKET_OVERVIEW",
+      null,
+      `Market overview refresh failed: ${error.message}.`
+    );
+
     return res.status(500).json({
       message: "Unable to load market overview",
       error: error.message

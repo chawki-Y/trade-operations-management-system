@@ -50,6 +50,13 @@ async function getMarketPrice(req, res) {
       stale: marketData.stale
     });
   } catch (error) {
+    await createAuditLog(
+      "MARKET_PRICE_REFRESH_FAILED",
+      "INSTRUMENT",
+      symbol,
+      `Market price refresh failed for ${symbol}: ${error.message}.`
+    );
+
     return res.status(502).json({
       message: "Unable to retrieve market price",
       symbol,
