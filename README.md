@@ -43,7 +43,55 @@ The goal is to simulate the type of support tool used by middle-office teams to 
 - Store trade records in PostgreSQL
 - Display trade history
 - Show reporting dashboard with total trades, booked trades, rejected trades, and total P&L
+- Embedded AI Trade Operations Copilot opened from a floating right-side button
+- Ask the copilot about the dashboard, trade concepts, available instruments, rejected trades, stale market data, audit logs, and P&L
 - Responsive frontend for laptop and mobile
+
+## AI Trade Operations Copilot
+
+The dashboard includes an embedded AI Trade Operations Copilot. It appears as a floating `Ask Copilot` button and opens a right-side assistant panel without disrupting the main workflow.
+
+The copilot is powered by a separate FastAPI backend and uses this Node/Express application as its source system. It does not duplicate trade validation, P&L, market data, or investigation logic. Instead, it calls the existing API endpoints exposed by this app.
+
+The assistant supports intent-aware behavior:
+
+- Explains the application when users ask what the system does.
+- Explains trade operations concepts such as trades, P&L, rejected trades, audit trail, and stale market data.
+- Answers reference-data questions such as available instruments from `GET /api/instruments`.
+- Answers operational data questions about rejected trades, market data health, audit logs, P&L, trade investigations, and operations summaries.
+- Responds naturally to small-talk/help messages.
+
+Example copilot questions:
+
+- `What is this app about?`
+- `What is a trade?`
+- `What is P&L?`
+- `What are the available instruments to use?`
+- `Show today's rejected trades.`
+- `Is any market data stale?`
+- `Why was trade TRD-20260625-000004 rejected?`
+
+The widget file is served from:
+
+```text
+public/trade-ops-copilot.js
+```
+
+The page initializes it in `public/index.html`:
+
+```html
+<script src="/trade-ops-copilot.js?v=5"></script>
+<script>
+  window.TradeOpsCopilot?.init({
+    apiBaseUrl: "http://127.0.0.1:8000",
+    title: "Trade Ops Copilot",
+    subtitle: "Middle-office assistant",
+    buttonLabel: "Ask Copilot"
+  });
+</script>
+```
+
+To use the copilot locally, run this app on port `3001` and run the copilot FastAPI backend on port `8000`.
 
 ## Screenshots
 
