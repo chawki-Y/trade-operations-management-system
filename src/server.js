@@ -9,6 +9,7 @@ const marketDataRoutes = require("./routes/marketDataRoutes");
 const marketOverviewRoutes = require("./routes/marketOverviewRoutes");
 const auditLogRoutes = require("./routes/auditLogRoutes");
 const operationsRoutes = require("./routes/operationsRoutes");
+const aiCopilotLogRoutes = require("./routes/aiCopilotLogRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -32,6 +33,7 @@ app.use("/api/market-price", marketDataRoutes);
 app.use("/api/market-overview", marketOverviewRoutes);
 app.use("/api/audit-logs", auditLogRoutes);
 app.use("/api/operations", operationsRoutes);
+app.use("/api/ai-copilot/logs", aiCopilotLogRoutes);
 
 app.listen(PORT, () => {
   console.log(`Trade Operations Management System API listening on port ${PORT}`);

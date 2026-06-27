@@ -65,6 +65,17 @@ CREATE TABLE IF NOT EXISTS market_prices (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS ai_copilot_logs (
+    id SERIAL PRIMARY KEY,
+    question TEXT NOT NULL,
+    intent VARCHAR(50),
+    answer TEXT,
+    data_source_endpoint VARCHAR(255),
+    row_count INTEGER DEFAULT 0,
+    error TEXT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 ALTER TABLE trades
 ADD COLUMN IF NOT EXISTS last_price_updated_at TIMESTAMP NULL;
 

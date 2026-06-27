@@ -45,13 +45,16 @@ The goal is to simulate the type of support tool used by middle-office teams to 
 - Show reporting dashboard with total trades, booked trades, rejected trades, and total P&L
 - Embedded AI Trade Operations Copilot opened from a floating right-side button
 - Ask the copilot about the dashboard, trade concepts, available instruments, rejected trades, stale market data, audit logs, and P&L
+- Store AI Copilot questions, answers, source endpoints, row counts, and errors in PostgreSQL
 - Responsive frontend for laptop and mobile
 
 ## AI Trade Operations Copilot
 
 The dashboard includes an embedded AI Trade Operations Copilot. It appears as a floating `Ask Copilot` button and opens a right-side assistant panel without disrupting the main workflow.
 
-The copilot is powered by a separate FastAPI backend and uses this Node/Express application as its source system. It does not duplicate trade validation, P&L, market data, or investigation logic. Instead, it calls the existing API endpoints exposed by this app.
+The copilot is powered by a separate, lightweight FastAPI backend and uses this Node/Express application as its source system. It does not duplicate trade validation, P&L, market data, investigation logic, or interaction history. Instead, it calls the existing API endpoints exposed by this app and writes every AI interaction back through `POST /api/ai-copilot/logs`.
+
+This application and its PostgreSQL database are the single source of truth for operational data and AI question-and-answer history. Centralizing the `ai_copilot_logs` audit trail improves traceability and makes future usage, quality, and error analytics possible without coupling the embedded copilot to its own database.
 
 The assistant supports intent-aware behavior:
 
@@ -189,6 +192,16 @@ http://localhost:3001
 ### GET `/api/health`
 
 Returns a simple health-check response confirming the API is running.
+
+### POST `/api/ai-copilot/logs`
+
+Stores an AI Copilot interaction with its question, intent, answer, source API endpoint, row count,
+and optional error. The FastAPI copilot calls this endpoint after each embedded `/agent/ask` request.
+
+### GET `/api/ai-copilot/logs`
+
+Returns the newest AI Copilot interaction logs first. Use the optional `limit` query parameter;
+the API constrains it to `1-100` and defaults to `50`.
 
 ### POST `/api/trades`
 
